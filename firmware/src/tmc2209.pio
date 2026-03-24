@@ -1,0 +1,58 @@
+;
+; Stepper Motor PIO Controller
+; WHowe <github.com/whowechina>
+;
+; Controls a stepper motor driver via STEP and DIR signals.
+; Each move is one 32-bit TX FIFO word:
+;
+;   Bit 31    : direction (0 = forward, 1 = reverse)
+;   Bits 30:16: step_count - 1 (15 bits, range 1..32768 steps)
+;   Bits 15:0 : half-period delay N (16 bits)
+;
+; With fixed SM clock divider = 16 (set in C):
+;   step period (SM cycles) = 2*N + 5
+;   step_freq = clk_sys / (16 * (2*N + 5))
+;
+; ISR is used internally as the delay template register.
+;
+
+.program tmc2209
+.side_set 1     ; STEP pin driven by side-set
+
+.wrap_target
+    pull block          side 0      ; word: dir[31] + steps[30:16] + delay[15:0]
+    out pins, 1         side 0      ; direction bit
+    out y, 15           side 0      ; Y = step_count - 1
+    out x, 16           side 0      ; X = delay N
+    mov isr, x          side 0      ; ISR = N (saved template for reload)
+step_loop:
+    mov x, isr          side 1      ; reload counter from template, STEP high
+high_delay:
+    jmp x-- high_delay  side 1      ; burn N+1 cycles at STEP high
+    mov x, isr          side 0      ; reload counter, STEP low
+low_delay:
+    jmp x-- low_delay   side 0      ; burn N+1 cycles at STEP low
+    jmp y-- step_loop   side 0      ; repeat for all steps
+.wrap
+
+% c-sdk {
+#include "hardware/clocks.h"
+
+static inline void tmc2209_program_init(PIO pio, uint sm, uint offset,
+                                        uint step_pin, uint dir_pin)
+{
+    pio_gpio_init(pio, step_pin);
+    pio_gpio_init(pio, dir_pin);
+
+    pio_sm_set_consecutive_pindirs(pio, sm, step_pin, 1, true);
+    pio_sm_set_consecutive_pindirs(pio, sm, dir_pin, 1, true);
+
+    pio_sm_config c = tmc2209_program_get_default_config(offset);
+    sm_config_set_sideset_pins(&c, step_pin);   /* STEP via side-set */
+    sm_config_set_out_pins(&c, dir_pin, 1);     /* DIR via out */
+    sm_config_set_out_shift(&c, false, false, 32); /* shift left, no autopull */
+
+    pio_sm_init(pio, sm, offset, &c);
+    pio_sm_set_enabled(pio, sm, true);
+}
+%}
