@@ -1123,7 +1123,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(property "Reference" "J"
-			(at 0 12.7 0)
+			(at 0 15.24 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1131,15 +1131,15 @@
 			)
 		)
 		(property "Value" "NV3007"
-			(at 4.064 -15.494 0)
+			(at 4.064 -16.002 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Footprint" "densha_pico:FPC0.5_10P"
-			(at 0 0 0)
+		(property "Footprint" "densha_pico:NV3007_FPC0.5_10P"
+			(at 0 2.54 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1148,7 +1148,7 @@
 			)
 		)
 		(property "Datasheet" "NV3007 146*428"
-			(at 7.874 0 0)
+			(at 7.874 2.54 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1157,7 +1157,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 0 0 0)
+			(at 0 2.54 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1185,7 +1185,7 @@
 		)
 		(symbol "NV3007_1_1"
 			(rectangle
-				(start -1.27 11.43)
+				(start -1.27 13.97)
 				(end 9.525 -13.97)
 				(stroke
 					(width 0.254)
@@ -1196,7 +1196,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -5.08 10.16 0)
+				(at -5.08 12.7 0)
 				(length 3.81)
 				(name "SDA"
 					(effects
@@ -1214,7 +1214,7 @@
 				)
 			)
 			(pin input line
-				(at -5.08 7.62 0)
+				(at -5.08 10.16 0)
 				(length 3.81)
 				(name "SCL"
 					(effects
@@ -1232,7 +1232,7 @@
 				)
 			)
 			(pin input line
-				(at -5.08 5.08 0)
+				(at -5.08 7.62 0)
 				(length 3.81)
 				(name "D/CX"
 					(effects
@@ -1250,7 +1250,7 @@
 				)
 			)
 			(pin input line
-				(at -5.08 2.54 0)
+				(at -5.08 5.08 0)
 				(length 3.81)
 				(name "RESX"
 					(effects
@@ -1268,7 +1268,7 @@
 				)
 			)
 			(pin input line
-				(at -5.08 0 0)
+				(at -5.08 2.54 0)
 				(length 3.81)
 				(name "CSX"
 					(effects
@@ -1286,7 +1286,7 @@
 				)
 			)
 			(pin passive line
-				(at -5.08 -2.54 0)
+				(at -5.08 0 0)
 				(length 3.81)
 				(name "TE"
 					(effects
@@ -1304,7 +1304,7 @@
 				)
 			)
 			(pin power_in line
-				(at -5.08 -5.08 0)
+				(at -5.08 -2.54 0)
 				(length 3.81)
 				(name "VCI"
 					(effects
@@ -1322,7 +1322,7 @@
 				)
 			)
 			(pin power_in line
-				(at -5.08 -7.62 0)
+				(at -5.08 -5.08 0)
 				(length 3.81)
 				(name "LED_K"
 					(effects
@@ -1340,7 +1340,7 @@
 				)
 			)
 			(pin power_in line
-				(at -5.08 -10.16 0)
+				(at -5.08 -7.62 0)
 				(length 3.81)
 				(name "LED_A"
 					(effects
@@ -1358,7 +1358,7 @@
 				)
 			)
 			(pin power_in line
-				(at -5.08 -12.7 0)
+				(at -5.08 -10.16 0)
 				(length 3.81)
 				(name "GND"
 					(effects
@@ -1372,6 +1372,129 @@
 						(font
 							(size 1.27 1.27)
 						)
+					)
+				)
+			)
+			(pin passive line
+				(at -5.08 -12.7 0)
+				(length 3.81)
+				(name "Mouting"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "MP"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+		)
+		(embedded_fonts no)
+	)
+	(symbol "NV3007_Stub"
+		(pin_names
+			(offset 1.016)
+		)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(property "Reference" "J"
+			(at 0 15.24 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "NV3007_Stub"
+			(at 4.064 -16.002 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "densha_pico:NV3007_Stub"
+			(at 0 2.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "NV3007 146*428"
+			(at 7.874 2.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 0 2.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "ki_keywords" "connector"
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "ki_fp_filters" "Connector*:*_1x??_*"
+			(at 0 0 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(symbol "NV3007_Stub_0_1"
+			(rectangle
+				(start -0.635 13.335)
+				(end 8.89 -13.335)
+				(stroke
+					(width 0)
+					(type default)
+				)
+				(fill
+					(type none)
+				)
+			)
+		)
+		(symbol "NV3007_Stub_1_1"
+			(rectangle
+				(start -1.27 13.97)
+				(end 9.525 -13.97)
+				(stroke
+					(width 0.254)
+					(type default)
+				)
+				(fill
+					(type color)
+					(color 44 10 98 1)
+				)
+			)
+			(text "NV3007\nLCD\n142*428"
+				(at 4.064 0.254 0)
+				(effects
+					(font
+						(size 1.27 1.27)
 					)
 				)
 			)

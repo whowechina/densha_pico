@@ -1,2 +1,4 @@
 PCB/**/*backups/*.zip
 Production/PCB/*/*
+PCB/**/*.bak
+PCB/**/fp-info-cache
