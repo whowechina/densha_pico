@@ -313,7 +313,7 @@ static void init_registers()
 
 void tmc2209_uart_init(uart_inst_t *uart, uint tx_pin, uint rx_pin, uint8_t addr)
 {
-    uart_init(uart, 800000);
+    uart_init(uart, 115200);
     gpio_set_function(tx_pin, GPIO_FUNC_UART);
     gpio_set_function(rx_pin, GPIO_FUNC_UART);
     uart_set_hw_flow(uart, false, false);

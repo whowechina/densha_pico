@@ -8,6 +8,9 @@
 #include "pico/stdio.h"
 #include "pico/stdlib.h"
 #include "pico/bootrom.h"
+
+#include "hardware/clocks.h"
+
 #include "cli.h"
 #include "savedata.h"
 
@@ -88,10 +91,18 @@ void cli_fps_count(int core)
     counter[core] = 0;
 }
 
+int cli_get_fps(int core)
+{
+    return fps[core];
+}
+
 static void handle_fps(int argc, char *argv[])
 {
+    uint32_t mhz = clock_get_hz(clk_sys) / 1000000;
+    printf("System clock: %lu MHz\n", mhz);
     printf("FPS: core 0: %d, core 1: %d\n", fps[0], fps[1]);
 }
+
 static void handle_update(int argc, char *argv[])
 {
     printf("Boot into update mode.\n");

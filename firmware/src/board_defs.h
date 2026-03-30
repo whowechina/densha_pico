@@ -13,23 +13,23 @@
 #define BUTTON_PULL_UPDOWN {  }
 
 #define TMC2209_ENABLE_PIN 6
-#define TMC2209_STEP_PIN 3
-#define TMC2209_DIR_PIN 2
+#define TMC2209_STEP_PIN 7
+#define TMC2209_DIR_PIN 10
 
 #define TMC2209_UART uart1
-#define TMC2209_TX_PIN 4
-#define TMC2209_RX_PIN 5
+#define TMC2209_TX_PIN 8
+#define TMC2209_RX_PIN 9
 
-#define SENSOR_I2C i2c1
-#define SENSOR_SCL_PIN 27
-#define SENSOR_SDA_PIN 26
+#define SENSOR_I2C i2c0
+#define SENSOR_SCL_PIN 13
+#define SENSOR_SDA_PIN 12
 
 #define NV3007_SPI spi0
-#define NV3007_SCK_PIN 6
-#define NV3007_TX_PIN 7
+#define NV3007_SCK_PIN 2
+#define NV3007_TX_PIN 3
 #define NV3007_CSN_PIN 5
-#define NV3007_DC_PIN 26
-#define NV3007_RST_PIN 4
-#define NV3007_LEDK_PIN 15
+#define NV3007_DC_PIN 4
+#define NV3007_RST_PIN 1
+#define NV3007_LEDK_PIN 0
 
 #endif

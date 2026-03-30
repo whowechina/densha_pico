@@ -1,5 +1,5 @@
 /*
- * Controller Config and Runtime Data
+ * Contro1ler Config and Runtime Data
  * WHowe <github.com/whowechina>
  * 
  * Config is a global data structure that stores all the configuration
@@ -14,6 +14,13 @@ densha_cfg_t *densha_cfg;
 static densha_cfg_t default_cfg = {
     .light = {
         .level = 128,
+    },
+    .lcd = {
+        .backlight = 200,
+    },
+    .mascon = {
+        .hold = 10,
+        .run = 15,
     },
 };
 

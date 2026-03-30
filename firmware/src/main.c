@@ -38,6 +38,9 @@
 
 #include "gui.h"
 
+const bool gui = true;
+const bool lever = true;
+
 static void run_lights()
 {
     uint16_t button = button_read();
@@ -63,7 +66,7 @@ static void core1_loop()
         if (mutex_try_enter(&core1_io_lock, NULL)) {
             run_lights();
             light_update();
-            gui_loop();
+            if (gui) gui_loop();
             mutex_exit(&core1_io_lock);
         }
         cli_fps_count(1);
@@ -119,7 +122,7 @@ static void core0_loop()
 
         hid_update();
 
-        //lever_update();
+        if (lever) lever_update();
 
         debug_display();
 
@@ -137,7 +140,7 @@ void init()
 {
     sleep_ms(50);
 
-    set_sys_clock_khz(200000, true);
+    set_sys_clock_khz(240000, true);
 
     board_init();
     update_check();
@@ -152,7 +155,7 @@ void init()
     light_init();
     //button_init();
 
-    //lever_init();
+    if (lever) lever_init();
 
     gui_init();
 

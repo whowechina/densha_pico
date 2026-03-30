@@ -49,7 +49,9 @@ static struct {
     int y;
 } scroll;
 
-static uint16_t vram[HEIGHT * WIDTH];
+static uint16_t vram_buf[2][HEIGHT * WIDTH];
+static int vram_index = 0;
+static uint16_t *vram = vram_buf[0];
 
 static void send_cmd(uint8_t cmd, const void *data, size_t len)
 {
@@ -69,7 +71,7 @@ void nv3007_init_spi(spi_inst_t *port, uint8_t sck, uint8_t tx, uint8_t csn)
     // SPI overclock
     uint32_t freq = clock_get_hz(clk_sys);
     clock_configure(clk_peri, 0, CLOCKS_CLK_PERI_CTRL_AUXSRC_VALUE_CLK_SYS, freq, freq);
-    spi_init(port, freq / 2);
+    spi_init(port, freq / 4);
 
     gpio_set_function(tx, GPIO_FUNC_SPI);
     gpio_set_function(sck, GPIO_FUNC_SPI);
@@ -236,7 +238,8 @@ static const struct {
     {0xff, 1, {0x00}},
     {0x3a, 1, {0x05}},
     {0x11, 0, {0}, 220}, // sleep out, delay 220ms
-    {0x29, 0, {200}},      // display on
+    {0x21, 0, {0}},
+    {0x29, 0, {0}, 100}, // display on
 };
 
 static void init_lcd(void)
@@ -317,15 +320,17 @@ void nv3007_dimmer(uint8_t level)
 
 void nv3007_vsync()
 {
+    //while (dma_channel_is_busy(ctx.spi_dma)) {
+    //    tight_loop_contents();
+    //}
     dma_channel_wait_for_finish_blocking(ctx.spi_dma);
+    while (spi_is_busy(ctx.spi)) {
+        tight_loop_contents();
+    }
 }
 
-void nv3007_flush(bool vsync)
+void nv3007_flip()
 {
-    if (dma_channel_is_busy(ctx.spi_dma)) {
-        return;
-    }
-
     send_cmd(0x2c, NULL, 0);
     spi_set_format(ctx.spi, 16, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
 
@@ -334,9 +339,9 @@ void nv3007_flush(bool vsync)
                           vram, // read from
                           crop.w * crop.h, // element count
                           true); // start right now
-    if (vsync) {
-        nv3007_vsync();
-    }
+
+    vram_index = 1 - vram_index;
+    vram = vram_buf[vram_index];
 }
 
 static void vram_dma(uint32_t offset, const void *src, bool inc, size_t pixels)

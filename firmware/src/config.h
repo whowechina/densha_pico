@@ -16,12 +16,18 @@ typedef struct __attribute__((packed)) {
     struct {
         uint8_t backlight;
     } lcd;
+    struct {
+        uint8_t hold;
+        uint8_t run;
+        uint8_t reserved[19];
+    } mascon;
 } densha_cfg_t;
 
 typedef struct {
     uint8_t msmap[4096];
     struct {
         bool uart;
+        bool hall;
     } debug;
 } densha_runtime_t;
 

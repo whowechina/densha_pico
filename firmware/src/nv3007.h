@@ -18,7 +18,7 @@ uint16_t nv3007_get_crop_width();
 uint16_t nv3007_get_crop_height();
 void nv3007_dimmer(uint8_t level);
 void nv3007_vsync();
-void nv3007_flush(bool vsync);
+void nv3007_flip();
 
 #define nv3007_rgb32(r, g, b) ((r << 16) | (g << 8) | b)
 #define nv3007_rgb565(rgb32) ((rgb32 >> 8) & 0xf800) | ((rgb32 >> 5) & 0x0780) | ((rgb32 >> 3) & 0x001f)

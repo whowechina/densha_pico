@@ -33,7 +33,7 @@ static struct {
 
 static void mt6701_port_init()
 {
-	i2c_init(SENSOR_I2C, 800 * 1000);
+	i2c_init(SENSOR_I2C, 400 * 1000);
 	gpio_set_function(SENSOR_SCL_PIN, GPIO_FUNC_I2C);
 	gpio_set_function(SENSOR_SDA_PIN, GPIO_FUNC_I2C);
 	gpio_pull_up(SENSOR_SCL_PIN);
@@ -52,6 +52,7 @@ void lever_init()
 	tmc2209_uart_init(TMC2209_UART, TMC2209_TX_PIN, TMC2209_RX_PIN, 0);
 	ctx.tmc2209_ready = tmc2209_present();
     tmc2209_set_microsteps(64);
+    tmc2209_set_current(densha_cfg->mascon.run, densha_cfg->mascon.hold, 0);
 
 	ctx.raw_angle = -1;
 }
@@ -102,7 +103,9 @@ static void read_angle()
         angle /= AVG_WINDOW;
         if (angle != ctx.raw_angle) {
             ctx.raw_angle = angle;
-            printf("A:%5d:%6.2f\n", ctx.raw_angle, lever_get_angle_deg());
+            if (densha_runtime.debug.hall) {
+                printf("A:%5d:%6.2f\n", ctx.raw_angle, lever_get_angle_deg());
+            }
         }
     }
 }
@@ -128,7 +131,7 @@ static void do_follow()
 void lever_update()
 {
     read_angle();
-    sync_microstep();
+    if (0) sync_microstep();
 
     if (!ctx.tmc2209_ready) {
 		return;

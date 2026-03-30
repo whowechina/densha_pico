@@ -37,6 +37,13 @@ static void disp_light()
     printf("\n");
 }
 
+static void disp_lcd()
+{
+    printf("[LCD]\n");
+    printf("  Backlight: %d.\n", densha_cfg->lcd.backlight);
+    printf("\n");
+}
+
 static void disp_handle()
 {
     printf("[Handle]\n");
@@ -46,7 +53,7 @@ static void disp_handle()
 
 void handle_display(int argc, char *argv[])
 {
-    const char *usage = "Usage: display [light|handle]\n";
+    const char *usage = "Usage: display [light|handle|lcd]\n";
     if (argc > 1) {
         printf(usage);
         return;
@@ -55,17 +62,21 @@ void handle_display(int argc, char *argv[])
     if (argc == 0) {
         printf("CFG:%p\n", densha_cfg);
         disp_light();
+        disp_lcd();
         disp_handle();
         return;
     }
 
-    const char *choices[] = {"light", "handle"};
+    const char *choices[] = {"light", "handle", "lcd"};
     switch (cli_match_prefix(choices, count_of(choices), argv[0])) {
         case 0:
             disp_light();
             break;
         case 1:
             disp_handle();
+            break;
+        case 2:
+            disp_lcd();
             break;
         default:
             printf(usage);
@@ -108,6 +119,7 @@ static void handle_lcd(int argc, char *argv[])
     }
 
     densha_cfg->lcd.backlight = level;
+    config_changed();
     printf("LCD backlight set to %d.\n", level);
 }
 
@@ -289,6 +301,9 @@ static void handle_current(int argc, char *argv[])
         return;
     }
 
+    densha_cfg->mascon.run = irun;
+    densha_cfg->mascon.hold = ihold;
+    config_changed();
     printf("Current set.\n");
 }
 
@@ -305,22 +320,26 @@ static void handle_factory_reset()
 
 static void handle_debug(int argc, char *argv[])
 {
-    const char *usage = "Usage: debug <uart>\n";
+    const char *usage = "Usage: debug <uart|hall>\n";
     if (argc != 1) {
         printf(usage);
         return;
     }
 
-    const char *choices[] = {"uart"};
+    const char *choices[] = {"uart", "hall"};
     int choice = cli_match_prefix(choices, count_of(choices), argv[0]);
     if (choice < 0) {
         printf(usage);
         return;
     }
 
-    densha_runtime.debug.uart = !densha_runtime.debug.uart;
-
-    printf("UART debug: %s\n", densha_runtime.debug.uart ? "on" : "off");
+    if (choice == 0) {
+        densha_runtime.debug.uart = !densha_runtime.debug.uart;
+        printf("UART debug: %s\n", densha_runtime.debug.uart ? "on" : "off");
+    } else if (choice == 1) {
+        densha_runtime.debug.hall = !densha_runtime.debug.hall;
+        printf("Hall debug: %s\n", densha_runtime.debug.hall ? "on" : "off");
+    }
 }
 
 void commands_init()

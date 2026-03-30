@@ -13,6 +13,8 @@ void cli_init(const char *prompt, const char *logo);
 void cli_register(const char *cmd, cmd_handler_t handler, const char *help);
 void cli_run();
 void cli_fps_count(int core);
+int cli_get_fps(int core);
+
 
 /* Optional callback: called when Ctrl+C is received in CLI input. */
 void cli_ctrl_c_cb(void);
