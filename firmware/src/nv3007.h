@@ -1,6 +1,5 @@
-void nv3007_flush_sw(void);
 /*
- * NV3007 Buffered Display Driver for Pico with DMA Support
+ * NV3007 Double Buffered Display Driver
  * WHowe <github.com/whowechina>
  * 
  * LEDK is driven by PWM to adjust brightness
@@ -13,7 +12,7 @@ void nv3007_flush_sw(void);
 
 void nv3007_init_spi(spi_inst_t *port, uint8_t sck, uint8_t tx, uint8_t csn);
 void nv3007_init(spi_inst_t *port, uint8_t dc, uint8_t rst, uint8_t ledk);
-void nv3007_crop(uint16_t x, uint16_t y, uint16_t w, uint16_t h, bool absolute);
+void nv3007_crop(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
 uint16_t nv3007_get_crop_width();
 uint16_t nv3007_get_crop_height();
 void nv3007_dimmer(uint8_t level);

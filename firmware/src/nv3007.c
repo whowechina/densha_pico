@@ -1,5 +1,5 @@
 /*
- * NV3007 Buffered Display Driver for Pico with DMA Support
+ * NV3007 Double Buffered Display Driver
  * WHowe <github.com/whowechina>
  * 
  * LEDK is driven by PWM to adjust brightness
@@ -38,8 +38,6 @@ static struct {
 static struct crop_ctx {
     uint16_t x;
     uint16_t y;
-    uint16_t vx;
-    uint16_t vy;
     uint16_t w;
     uint16_t h;
 } crop = { .w = WIDTH, .h = HEIGHT };
@@ -257,7 +255,7 @@ static void init_lcd(void)
         }
         sleep_ms(1);
     }
-    nv3007_crop(12, 0, WIDTH, HEIGHT, true);
+    nv3007_crop(12, 0, WIDTH, HEIGHT);
 }
 
 void nv3007_init(spi_inst_t *port, uint8_t dc, uint8_t rst, uint8_t ledk)
@@ -275,29 +273,22 @@ void nv3007_init(spi_inst_t *port, uint8_t dc, uint8_t rst, uint8_t ledk)
 
 static void update_addr()
 {
-    uint16_t xs = crop.x + crop.vx;
+    uint16_t xs = crop.x;
     uint16_t xe = xs + crop.w - 1;
     uint8_t ca[] = { xs >> 8, xs & 0xff, xe >> 8, xe & 0xff };
     printf("xs: %d xe: %d\n", xs, xe);
     send_cmd(0x2a, ca, sizeof(ca));
 
-    uint16_t ys = crop.y + crop.vy;
+    uint16_t ys = crop.y;
     uint16_t ye = ys + crop.h - 1;
     uint8_t ra[] = { ys >> 8, ys & 0xff, ye >> 8, ye & 0xff };
     send_cmd(0x2b, ra, sizeof(ra));
 }
 
-void nv3007_crop(uint16_t x, uint16_t y, uint16_t w, uint16_t h, bool absolute)
+void nv3007_crop(uint16_t x, uint16_t y, uint16_t w, uint16_t h)
 {
-    if (absolute) {
-        crop.x = x;
-        crop.y = y;
-        crop.vx = 0;
-        crop.vy = 0;
-    } else {
-        crop.vx = x;
-        crop.vy = y;
-    }
+    crop.x = x;
+    crop.y = y;
     crop.w = w;
     crop.h = h;
     update_addr();
