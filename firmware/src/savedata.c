@@ -52,50 +52,22 @@ static int data_page = -1;
 static bool requesting_save = false;
 static uint64_t requesting_time = 0;
 
-static mutex_t *io_lock;
-static uint32_t program_ints = 0;
-
-static bool prepare_program()
-{
-    multicore_lockout_start_blocking();
-    return true;
-
-    if (!mutex_enter_timeout_us(io_lock, 100000)) {
-        return false;
-    }
-    sleep_ms(10); // wait for all io operations to finish
-    program_ints = save_and_disable_interrupts();
-    return true;
-}
-
-static void finish_program()
-{
-    multicore_lockout_end_blocking();
-    return;
-    
-    restore_interrupts(program_ints);
-    mutex_exit(io_lock);
-}
-
 static void save_program()
 {
-    printf("FLASH:%d SECTOR:%d\n", PICO_FLASH_SIZE_BYTES, FLASH_SECTOR_SIZE);
     old_data = new_data;
 
     data_page = (data_page + 1) % (FLASH_SECTOR_SIZE / FLASH_PAGE_SIZE);
     printf("\nProgram Flash %d %8lx\n", data_page, old_data.magic);
 
-    if (!prepare_program()) {
-        printf("Program Flash Failed.\n");
-        return;
-    }
+    multicore_lockout_start_blocking();
 
     if (data_page == 0) {
         flash_range_erase(SAVE_SECTOR_OFFSET, FLASH_SECTOR_SIZE);
     }
     flash_range_program(SAVE_SECTOR_OFFSET + data_page * FLASH_PAGE_SIZE,
                         (uint8_t *)&old_data, FLASH_PAGE_SIZE);
-    finish_program();
+
+    multicore_lockout_end_blocking();
 }
 
 static void load_default()
@@ -159,10 +131,9 @@ uint64_t board_id_64()
     return board_id.id64;
 }
 
-void savedata_init(uint32_t magic, mutex_t *locker)
+void savedata_init(uint32_t magic)
 {
     my_magic = magic;
-    io_lock = locker;
     save_load();
     savedata_loop();
     save_loaded();
@@ -211,13 +182,12 @@ void savedata_read_global(size_t offset, void *data, size_t size)
 
 void savedata_write_global(size_t offset, const void *data, size_t size)
 {
-    if (!prepare_program()) {
-        printf("Program Global Flash failed.\n");
-        return;
-    }
+    multicore_lockout_start_blocking();
+
     flash_range_erase(GLOBAL_SECTOR_OFFSET, GLOBAL_SECTOR_SIZE);
     flash_range_program(GLOBAL_SECTOR_OFFSET + offset, (const uint8_t *)data, size);
-    finish_program();
+
+    multicore_lockout_end_blocking();
 }
 
 void savedata_request(bool immediately)
