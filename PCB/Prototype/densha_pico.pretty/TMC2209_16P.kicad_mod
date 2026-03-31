@@ -138,19 +138,6 @@
 		(layer "F.SilkS")
 		(uuid "fb677fff-7aa6-4bd3-9bda-d68afddb8bf5")
 	)
-	(fp_text user "TMC2209"
-		(at -3.25 7.5 0)
-		(unlocked yes)
-		(layer "F.SilkS")
-		(uuid "3a4c28bd-80aa-4d0e-b9f3-098540c99f73")
-		(effects
-			(font
-				(size 1 1)
-				(thickness 0.15)
-			)
-			(justify left bottom)
-		)
-	)
 	(pad "1" thru_hole rect
 		(at -6.35 -8.89)
 		(size 1.9 1.7)

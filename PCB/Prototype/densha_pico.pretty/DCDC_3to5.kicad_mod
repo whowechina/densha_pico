@@ -1,7 +1,7 @@
 (footprint "DCDC_3to5"
-	(version 20240108)
+	(version 20241229)
 	(generator "pcbnew")
-	(generator_version "8.0")
+	(generator_version "9.0")
 	(layer "F.Cu")
 	(descr "DCDC-Converter, Artesyn, ATA Series, 3W Single and Dual Output, 1500VDC Isolation, 24.0x13.7x8.0mm https://www.artesyn.com/power/assets/ata_series_ds_01apr2015_79c25814fd.pdf https://www.artesyn.com/power/assets/trn_dc-dc_ata_3w_series_releas1430412818_techref.pdf")
 	(tags "DCDC SMD")
@@ -23,18 +23,6 @@
 		(effects
 			(font
 				(size 1 1)
-				(thickness 0.15)
-			)
-		)
-	)
-	(property "Footprint" ""
-		(at 0 0 0)
-		(layer "F.Fab")
-		(hide yes)
-		(uuid "137d27bc-8f89-4091-98d9-3e119461fbb6")
-		(effects
-			(font
-				(size 1.27 1.27)
 				(thickness 0.15)
 			)
 		)
@@ -185,7 +173,7 @@
 		(uuid "d8b0c91f-b283-476f-b6fa-04da9d1cd712")
 	)
 	(fp_text user "-"
-		(at 12.9 -4.9 0)
+		(at 9.5 -2.2 0)
 		(unlocked yes)
 		(layer "F.SilkS")
 		(uuid "4469ef8b-ca9c-41e8-b27d-0442ce341583")
@@ -197,7 +185,7 @@
 		)
 	)
 	(fp_text user "+"
-		(at -12.7 4.9 0)
+		(at -9.5 2.15 0)
 		(unlocked yes)
 		(layer "F.SilkS")
 		(uuid "44e84bbd-7776-4439-a771-140d4aec8541")
@@ -209,7 +197,7 @@
 		)
 	)
 	(fp_text user "OUT"
-		(at 12.4 0 0)
+		(at 10 0 0)
 		(unlocked yes)
 		(layer "F.SilkS")
 		(uuid "5ac822f7-17b1-4be5-bedc-6bf3792cc879")
@@ -221,7 +209,7 @@
 		)
 	)
 	(fp_text user "-"
-		(at -12.8 -4.8 0)
+		(at -9.5 -2.3 0)
 		(unlocked yes)
 		(layer "F.SilkS")
 		(uuid "79f88844-b499-472b-82d2-669c292ba050")
@@ -233,7 +221,7 @@
 		)
 	)
 	(fp_text user "+"
-		(at 12.8 4.8 0)
+		(at 9.5 2.2 0)
 		(unlocked yes)
 		(layer "F.SilkS")
 		(uuid "a45f2314-7796-43f7-bc7d-c9e0bd27fa96")
@@ -245,7 +233,7 @@
 		)
 	)
 	(fp_text user "IN"
-		(at -11.4 0 0)
+		(at -9.45 0 0)
 		(unlocked yes)
 		(layer "F.SilkS")
 		(uuid "ff619f47-7048-426d-a68e-a1c46161a000")
@@ -270,31 +258,32 @@
 	(pad "1" smd roundrect
 		(at -8.89 -3.81 155)
 		(size 6 2)
-		(layers "F.Cu" "F.Paste" "F.Mask")
+		(layers "F.Cu" "F.Mask" "F.Paste")
 		(roundrect_rratio 0.25)
 		(uuid "e2b6e30a-3f11-4b15-a53f-cbce6856a02b")
 	)
 	(pad "2" smd roundrect
 		(at 8.89 -3.81 25)
 		(size 6 2)
-		(layers "F.Cu" "F.Paste" "F.Mask")
+		(layers "F.Cu" "F.Mask" "F.Paste")
 		(roundrect_rratio 0.25)
 		(uuid "6180ed10-ff6e-4da3-864e-0e44520a824c")
 	)
 	(pad "3" smd roundrect
 		(at -8.89 3.81 25)
 		(size 6 2)
-		(layers "F.Cu" "F.Paste" "F.Mask")
+		(layers "F.Cu" "F.Mask" "F.Paste")
 		(roundrect_rratio 0.25)
 		(uuid "2a8563b7-e378-4c76-993d-ed49b8e1600a")
 	)
 	(pad "4" smd roundrect
 		(at 8.89 3.81 155)
 		(size 6 2)
-		(layers "F.Cu" "F.Paste" "F.Mask")
+		(layers "F.Cu" "F.Mask" "F.Paste")
 		(roundrect_rratio 0.25)
 		(uuid "b207e73a-2dec-492a-9928-65a93e700abd")
 	)
+	(embedded_fonts no)
 	(model "D:/Code/geki_pico/PCB/Lib/3dmodels/dcdc_3to5.step"
 		(offset
 			(xyz 0 0 0)
