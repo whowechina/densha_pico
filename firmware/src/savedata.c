@@ -32,7 +32,8 @@ static uint32_t my_magic = 0xcafec00e;
 
 #define SAVE_TIMEOUT_US 5000000
 
-#define SAVE_SECTOR_OFFSET (PICO_FLASH_SIZE_BYTES - FLASH_SECTOR_SIZE)
+// Note: Somehow firmware update erases last sector so we use second last
+#define SAVE_SECTOR_OFFSET (PICO_FLASH_SIZE_BYTES - 2 * FLASH_SECTOR_SIZE)
 
 #define GLOBAL_SECTOR_NUM 2
 #define GLOBAL_SECTOR_SIZE (GLOBAL_SECTOR_NUM * FLASH_SECTOR_SIZE)
@@ -56,6 +57,9 @@ static uint32_t program_ints = 0;
 
 static bool prepare_program()
 {
+    multicore_lockout_start_blocking();
+    return true;
+
     if (!mutex_enter_timeout_us(io_lock, 100000)) {
         return false;
     }
@@ -66,12 +70,16 @@ static bool prepare_program()
 
 static void finish_program()
 {
+    multicore_lockout_end_blocking();
+    return;
+    
     restore_interrupts(program_ints);
     mutex_exit(io_lock);
 }
 
 static void save_program()
 {
+    printf("FLASH:%d SECTOR:%d\n", PICO_FLASH_SIZE_BYTES, FLASH_SECTOR_SIZE);
     old_data = new_data;
 
     data_page = (data_page + 1) % (FLASH_SECTOR_SIZE / FLASH_PAGE_SIZE);
