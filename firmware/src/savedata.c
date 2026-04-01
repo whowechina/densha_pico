@@ -52,7 +52,7 @@ static int data_page = -1;
 static bool requesting_save = false;
 static uint64_t requesting_time = 0;
 
-static void save_program()
+static void __not_in_flash_func(save_program)()
 {
     old_data = new_data;
 

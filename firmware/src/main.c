@@ -57,18 +57,14 @@ static void run_lights()
     }
 }
 
-static mutex_t core1_io_lock;
 static void core1_loop()
 {
     multicore_lockout_victim_init();
 
     while (1) {
-        if (mutex_try_enter(&core1_io_lock, NULL)) {
-            run_lights();
-            light_update();
-            if (gui) gui_loop();
-            mutex_exit(&core1_io_lock);
-        }
+        run_lights();
+        light_update();
+        if (gui) gui_loop();
         cli_fps_count(1);
         sleep_us(700);
     }
@@ -149,8 +145,7 @@ void init()
     stdio_init_all();
 
     config_init();
-    mutex_init(&core1_io_lock);
-    savedata_init(0xcaf1ccc2, &core1_io_lock);
+    savedata_init(0xcaf1ccc2);
 
     light_init();
     //button_init();
