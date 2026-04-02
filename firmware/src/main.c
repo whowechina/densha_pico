@@ -57,9 +57,14 @@ static void run_lights()
     }
 }
 
+static void core1_init()
+{
+    flash_safe_execute_core_init();
+}
+
 static void core1_loop()
 {
-    multicore_lockout_victim_init();
+    core1_init();
 
     while (1) {
         run_lights();
