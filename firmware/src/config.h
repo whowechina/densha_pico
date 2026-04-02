@@ -25,9 +25,10 @@ typedef struct __attribute__((packed)) {
 
 typedef struct {
     uint8_t msmap[4096];
-    struct {
+    volatile struct {
         bool uart;
         bool hall;
+        bool flow;
     } debug;
 } densha_runtime_t;
 

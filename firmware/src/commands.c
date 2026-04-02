@@ -28,6 +28,8 @@ void cli_ctrl_c_cb(void)
 {
     printf("\nAll debug controls off.\n");
     densha_runtime.debug.uart = false;
+    densha_runtime.debug.hall = false;
+    densha_runtime.debug.flow = false;
 }
 
 static void disp_light()
@@ -44,16 +46,18 @@ static void disp_lcd()
     printf("\n");
 }
 
-static void disp_handle()
+static void disp_mascon()
 {
-    printf("[Handle]\n");
+    printf("[Mascon]\n");
     printf("  MT6701 Present: %s\n", lever_mt6701_ready() ? "Yes" : "No");
     printf("  TMC2209 Present: %s\n", lever_tmc2209_ready() ? "Yes" : "No");
+    printf("  Hold Current: %d\n", densha_cfg->mascon.hold);
+    printf("  Run Current: %d\n", densha_cfg->mascon.run);
 }
 
 void handle_display(int argc, char *argv[])
 {
-    const char *usage = "Usage: display [light|handle|lcd]\n";
+    const char *usage = "Usage: display [light|lcd|mascon]\n";
     if (argc > 1) {
         printf(usage);
         return;
@@ -63,20 +67,20 @@ void handle_display(int argc, char *argv[])
         printf("CFG:%p\n", densha_cfg);
         disp_light();
         disp_lcd();
-        disp_handle();
+        disp_mascon();
         return;
     }
 
-    const char *choices[] = {"light", "handle", "lcd"};
+    const char *choices[] = {"light", "lcd", "mascon"};
     switch (cli_match_prefix(choices, count_of(choices), argv[0])) {
         case 0:
             disp_light();
             break;
         case 1:
-            disp_handle();
+            disp_lcd();
             break;
         case 2:
-            disp_lcd();
+            disp_mascon();
             break;
         default:
             printf(usage);
@@ -192,6 +196,35 @@ static void handle_ms(int argc, char *argv[])
     }
 
     printf("Microsteps set to %d.\n", ms);
+}
+
+static void handle_mascon(int argc, char *argv[])
+{
+    const char *usage = "Usage: mascon <hold> [run]\n"
+                        "  hold: 0..31\n"
+                        "  run: 0..31\n";
+    if ((argc < 1) || (argc > 2)) {
+        printf(usage);
+        return;
+    }
+
+    int hold = cli_extract_non_neg_int(argv[0], 0);
+    int run = (argc == 2) ? cli_extract_non_neg_int(argv[1], 0) : hold;
+
+    if ((hold < 0) || (hold > 31) || (run < 0) || (run > 31)) {
+        printf(usage);
+        return;
+    }
+
+    if (!tmc2209_set_current(run, hold, 0)) {
+        printf("Set current failed.\n");
+        return;
+    }
+
+    densha_cfg->mascon.hold = hold;
+    densha_cfg->mascon.run = run;
+    config_changed();
+    printf("Mascon current set: Run: %d, Hold: %d\n", run, hold);
 }
 
 static void handle_calibrate(int argc, char *argv[])
@@ -320,13 +353,13 @@ static void handle_factory_reset()
 
 static void handle_debug(int argc, char *argv[])
 {
-    const char *usage = "Usage: debug <uart|hall>\n";
+    const char *usage = "Usage: debug <uart|hall|flow>\n";
     if (argc != 1) {
         printf(usage);
         return;
     }
 
-    const char *choices[] = {"uart", "hall"};
+    const char *choices[] = {"uart", "hall", "flow"};
     int choice = cli_match_prefix(choices, count_of(choices), argv[0]);
     if (choice < 0) {
         printf(usage);
@@ -339,6 +372,9 @@ static void handle_debug(int argc, char *argv[])
     } else if (choice == 1) {
         densha_runtime.debug.hall = !densha_runtime.debug.hall;
         printf("Hall debug: %s\n", densha_runtime.debug.hall ? "on" : "off");
+    } else if (choice == 2) {
+        densha_runtime.debug.flow = !densha_runtime.debug.flow;
+        printf("Flow debug: %s\n", densha_runtime.debug.flow ? "on" : "off");
     }
 }
 
@@ -350,6 +386,7 @@ void commands_init()
     cli_register("step", handle_step, "TMC2209 movement.");
     cli_register("follow", handle_follow, "TMC2209 follow mode.");
     cli_register("ms", handle_ms, "Set microsteps.");
+    cli_register("mascon", handle_mascon, "Set mascon current.");
     cli_register("calibrate", handle_calibrate, "Calibrate microsteps.");
     cli_register("tmc2209", handle_tmc2209, "Read/write TMC2209 register.");
     cli_register("current", handle_current, "Set TMC2209 current");

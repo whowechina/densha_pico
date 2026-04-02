@@ -19,19 +19,24 @@
 
 #include "tmc2209.pio.h"
 
-#define TMC2209_SM_CLKDIV 16u
-#define TMC2209_MAX_STEPS_PER_MOVE 32768u
-#define TMC2209_REG_GCONF 0x00u
-#define TMC2209_REG_IFCNT 0x02u
-#define TMC2209_REG_MSCNT 0x6Au
-#define TMC2209_REG_TPOWERDOWN 0x11u
-#define TMC2209_REG_CHOPCONF 0x6Cu
-#define TMC2209_REG_PWMCONF 0x70u
-#define TMC2209_REG_IHOLD_IRUN 0x10u
-#define TMC2209_REG_IOIN 0x06u
+#define TMC2209_SM_CLKDIV 16
+#define TMC2209_MAX_STEPS_PER_MOVE 32768
+
+#define TMC2209_REG_GCONF 0x00
+#define TMC2209_REG_GSTAT 0x01
+#define TMC2209_REG_IFCNT 0x02
+#define TMC2209_REG_MSCNT 0x6A
+#define TMC2209_REG_TPOWERDOWN 0x11
+#define TMC2209_REG_CHOPCONF 0x6C
+#define TMC2209_REG_PWMCONF 0x70
+#define TMC2209_REG_IHOLD_IRUN 0x10
+#define TMC2209_REG_IOIN 0x06
+
 #define TMC2209_GCONF_PDN_DISABLE (1u << 6)
 #define TMC2209_GCONF_MSTEP_REG_SELECT (1u << 7)
 #define TMC2209_GCONF_MULTISTEP_FILT (1u << 8)
+
+#define TMC2209_PWMCONF_AUTOSCALE (1u << 18)
 
 /* Compute half-period delay N (16 bits) from step period in microseconds.
  * With fixed SM divider (TMC2209_SM_CLKDIV):
@@ -299,16 +304,21 @@ bool tmc2209_set_microsteps(uint16_t steps)
         return false;
     }
 
-    chopconf = (chopconf & ~(0x0f << 24)) | (mres << 24);
+    chopconf = (chopconf & ~(0x0f << 24)) | (mres << 24) | (1 << 17);
     return write_reg(TMC2209_REG_CHOPCONF, chopconf);
 }
 
 static void init_registers()
 {
+    // microstep by uart, not by pins
     write_reg(TMC2209_REG_GCONF,
               TMC2209_GCONF_PDN_DISABLE |
               TMC2209_GCONF_MSTEP_REG_SELECT |
               TMC2209_GCONF_MULTISTEP_FILT);
+
+    // clear reset flag
+    sleep_us(100);
+    write_reg(TMC2209_REG_GSTAT, 0x01);
 }
 
 void tmc2209_uart_init(uart_inst_t *uart, uint tx_pin, uint rx_pin, uint8_t addr)
@@ -324,7 +334,6 @@ void tmc2209_uart_init(uart_inst_t *uart, uint tx_pin, uint rx_pin, uint8_t addr
     tmc2209.ready = true;
 
     init_registers();
-    tmc2209_set_microsteps(8);
 }
 
 bool tmc2209_set_current(uint8_t irun, uint8_t ihold, uint8_t iholddelay)
